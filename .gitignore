@@ -1,0 +1,25 @@
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# .NET build files
+**/bin/
+**/obj/
+
+# Node dependencies
+**/node_modules/
+**/dist/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local development settings
+**/appsettings.Development.json
+
+# Operating system files
+.DS_Store
+Thumbs.db
