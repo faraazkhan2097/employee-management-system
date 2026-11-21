@@ -6,22 +6,22 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// 1. Register services
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-// PostgreSQL database connection
+// 2. Configure PostgreSQL database connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
 
-// Dependency injection
+// 3. Register repositories and services
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
-// CORS configuration
+// 4. Configure CORS
 var frontendUrl = builder.Configuration["FRONTEND_URL"]
     ?? "http://localhost:5173";
 
@@ -35,9 +35,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+// 5. Build application
 var app = builder.Build();
 
-// HTTP request pipeline
+// 6. Apply pending Entity Framework Core migrations
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<ApplicationDbContext>();
+
+    dbContext.Database.Migrate();
+}
+
+// 7. Configure HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -49,4 +59,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// 8. Start application
 app.Run();
