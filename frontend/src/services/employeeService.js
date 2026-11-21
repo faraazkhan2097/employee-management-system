@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5169/ems/employee';
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:5169/ems/employee";
 
 // GET:get all the employees
 export const getEmployees = async() => {
